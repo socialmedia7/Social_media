@@ -176,18 +176,6 @@ qplot(date, ..count.., data=topics, geom="density",
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ######### Analisis de Sentimientos
 require(devtools)
 install_github("sentiment140", "okugami79")
