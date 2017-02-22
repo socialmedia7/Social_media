@@ -1,5 +1,8 @@
 ###Entra a Twiterr
 
+###Entra a Twiterr
+library(RCurl)
+library(tm)
 library(twitteR)
 library(ROAuth)
 api_key <- "TEqtGTHhGpl0gaEj0YlacXSMP"
@@ -10,15 +13,20 @@ setup_twitter_oauth(api_key,api_secret,access_token,access_token_secret)
 
 ##### Limpieza de Texto
 
-####### 
-tweets <- userTimeline("marianaSalas", n = 3200)
-tweets.df <- twListToDF(tweets)
-library(tm)
+#######
+tweets <- userTimeline("marianaSalas", n = 3200) #Cargar en la variable tweets la informaciÃ³n de todos los twetter que  ella puso
+retweets<-searchTwitter('@marianaSalas',n=1000) #Cargar en la variable retweets la informaciÃ³n de todos los twetter en los que la mencionaron
+tweets.df <- twListToDF(tweets)#hacer un data frame con la informaciÃ³n en tweets
+retweets.df<-twListToDF(retweets)#hacer un data frame con la informaciÃ³n en retweets
+#dump('tweets.df',file=xxx) Crea un archivo .txt en la ruta que ingreses en file
 
-### Convierte un vector de Caracteres
 myCorpus <- Corpus(VectorSource(tweets.df$text))
-### convierte a minisculas
-myCorpus <- tm_map(myCorpus, content_transformer(tolower))
+#VectorSource lo que hace es poner en un  vector el data frame, es decir, cada tweets es una entrada del vector.
+#La function Corpus convierte cada entrada del vector en una lista.
+
+myCorpus <- tm_map(myCorpus, content_transformer(tolower))#Lo que hace tm_map es que al archivo le hace tal cambio
+#el cambio content_transformer(tolower) es que lo convierte en un archivo de texto plano
+
 ###### Remueve el URL de http
 removeURL <- function(x) gsub("http[^[:space:]]*", "", x)
 ####### convierte todas las palabras a minusculas
