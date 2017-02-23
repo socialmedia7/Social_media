@@ -133,25 +133,32 @@ word.freqr <- sort(rowSums(mr), decreasing = T)
 wordcloud(words = names(word.freqr), freq = word.freqr, min.freq = 1, max.words=200, random.order=FALSE, rot.per=0.35, 
           colors=brewer.pal(8, "Dark2"))
 
-#########################################################
+########## 1. Agrupamiento jerárquico##################################
 ############################################################################
-# remove sparse terms
+# En minería de datos, el agrupamiento jerárquico es un método de análisis de grupos puntuales, el cual busca construir una jerarquía de grupos. Estrategias para agrupamiento jerárquico generalmente caen en dos tipos:
+#Aglomerativas: Este es un acercamiento ascendente: cada observación comienza en su propio grupo, y los pares de grupos son mezclados mientras uno sube en la jerarquía.
+#Divisivas: Este es un acercamiento descendente: todas las observaciones comienzan en un grupo, y se realizan divisiones mientras uno baja en la jerarquía.
+
 tdm2 <- removeSparseTerms(tdm, sparse = 0.95)
 m2 <- as.matrix(tdm2)
+
 # cluster terms
 distMatrix <- dist(scale(m2))
-fit <- hclust(distMatrix, method = "ward.D")
+fit <- hclust(distMatrix, method = "ward.D",  main = "Dendrograma de Palabras por el Criterio de Ward")
 
 plot(fit)
-rect.hclust(fit, k = 6,border="red") # cut tree into 6 clusters 
+rect.hclust(fit, k = 6,border="red") # dibuja en rojo los grupoos 
 
-m3 <- t(m2) # transpose the matrix to cluster documents (tweets)
-set.seed(122) # set a fixed random seed
-k <- 6 # number of clusters
+###############2. K-Means Algoritmos de Analisis Grupa;#############################
+
+
+m3 <- t(m2) # Transpone la matriz m2
+set.seed(122) # una semilla random nueva
+k <- 6 # elegimos el numero de cluster k-means
 kmeansResult <- kmeans(m3, k)
-round(kmeansResult$centers, digits = 3) # cluster centers
+round(kmeansResult$centers, digits = 3) # centros del Grupoide
 
-###########################################################################
+#################Grafica de K-means######################
 library(fpc)
 library(cluster)
 d <- dist(t(tdm2), method="euclidian")   
@@ -162,10 +169,7 @@ clusplot(as.matrix(tdm2), kfit$cluster, color=T, shade=T, labels=2, lines=0)
 
 
 
-#######
-
-
-
+##################3.      ##################################################
 library(fpc)
 # partitioning around medoids with estimation of number of clusters
 pamResult <- pamk(m3, metric="manhattan")
@@ -194,7 +198,7 @@ for (i in 1:k){
 
 
 
-################################TopicModels
+################################# 4. Analisis de Topicos ################
 
 
 dtm <- as.DocumentTermMatrix(tdm)
@@ -251,8 +255,5 @@ egam <- (log(E(g)$weight)+.4) / max(log(E(g)$weight)+.4)
 E(g)$width <- egam
 plot(g, layout=layout1)
 #############################
-
-
-
 
 
