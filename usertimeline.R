@@ -5,6 +5,7 @@ library(twitteR)
 library(ROAuth)
 library(RColorBrewer)
 
+################### Conexion a la API ####################################################
 api_key <- "TEqtGTHhGpl0gaEj0YlacXSMP"
 api_secret <- "C2Uyt9dN8REdTlTkRBY7gFtMhLgVeNtbpEjefKpiBKO8Ux7ns0"
 access_token <- "831261005850120192-LQ39DWYq0KZOXqwldxMWHwB1AYUgdUv"
