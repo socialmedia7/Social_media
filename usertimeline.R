@@ -236,7 +236,8 @@ result <- aggregate(score ~ date, data = sentiments, sum)
 plot(result, type = "l")
 ############################
 
-#### Analisis de Grafos#######
+
+ #### Analisis de Grafos#######
 
 library("igraph")
 m2[m2>=1] <- 1
