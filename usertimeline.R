@@ -100,7 +100,7 @@ wordcloud(words = names(word.freqr), freq = word.freqr, min.freq = 1, max.words=
 # En minería de datos, el agrupamiento jerárquico es un método de análisis de grupos puntuales, el cual busca construir una jerarquía de grupos. Estrategias para agrupamiento jerárquico generalmente caen en dos tipos:
 #Aglomerativas: Este es un acercamiento ascendente: cada observación comienza en su propio grupo, y los pares de grupos son mezclados mientras uno sube en la jerarquía.
 #Divisivas: Este es un acercamiento descendente: todas las observaciones comienzan en un grupo, y se realizan divisiones mientras uno baja en la jerarquía.
-
+set.seed(12354)
 tdm2 <- removeSparseTerms(tdm, sparse = 0.95)
 m2 <- as.matrix(tdm2)
 # distancia del cluster
@@ -108,6 +108,28 @@ distMatrix <- dist(scale(m2))
 fit <- hclust(distMatrix, method = "ward.D")
 plot(fit)
 rect.hclust(fit, k = 6,border="red") # dibuja en rojo los grupoos 
+
+m_hclust<-hclust(distMatrix, method= "average")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "ward.D2")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "single")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "complete")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "mcquitty")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "median")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrix, method= "centroid")
+plot(m_hclust)
+
 
 ############# Para retwitters ############################
 
@@ -118,6 +140,27 @@ distMatrixe <- dist(scale(me2))
 fitre <- hclust(distMatrixe, method = "ward.D")
 plot(fitre)
 rect.hclust(fitre, k = 5,border="red") # dibuja en rojo los grupos
+
+m_hclust<-hclust(distMatrixe, method= "average")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "ward.D2")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "single")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "complete")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "mcquitty")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "median")
+plot(m_hclust)
+
+m_hclust<-hclust(distMatrixe, method= "centroid")
+plot(m_hclust)
 
 
 
