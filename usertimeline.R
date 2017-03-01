@@ -1,6 +1,4 @@
-###Entra a Twiterr
-
-###Entra a Twiterr
+######Entra a Twiterr
 library(RCurl)
 library(SnowballC)
 library(tm)
@@ -106,29 +104,36 @@ m2 <- as.matrix(tdm2)
 # distancia del cluster
 distMatrix <- dist(scale(m2))
 fit <- hclust(distMatrix, method = "ward.D")
-plot(fit)
+plot(fit , main = "Análisis Cluster-Tweets")
 rect.hclust(fit, k = 6,border="red") # dibuja en rojo los grupoos 
 
 m_hclust<-hclust(distMatrix, method= "average")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos 
 
 m_hclust<-hclust(distMatrix, method= "ward.D2")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 m_hclust<-hclust(distMatrix, method= "single")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 m_hclust<-hclust(distMatrix, method= "complete")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 m_hclust<-hclust(distMatrix, method= "mcquitty")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 m_hclust<-hclust(distMatrix, method= "median")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 m_hclust<-hclust(distMatrix, method= "centroid")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-Tweets")
+rect.hclust(m_hclust, k = 6,border="red") # dibuja en rojo los grupoos
 
 
 ############# Para retwitters ############################
@@ -138,54 +143,117 @@ me2 <- as.matrix(tdmre2)
 # distancia del cluster
 distMatrixe <- dist(scale(me2))
 fitre <- hclust(distMatrixe, method = "ward.D")
-plot(fitre)
+plot(fitre, main = "Análisis Cluster-Tweets")
 rect.hclust(fitre, k = 5,border="red") # dibuja en rojo los grupos
 
 m_hclust<-hclust(distMatrixe, method= "average")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "ward.D2")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "single")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "complete")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "mcquitty")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "median")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 m_hclust<-hclust(distMatrixe, method= "centroid")
-plot(m_hclust)
+plot(m_hclust, main = "Análisis Cluster-retTweets")
+rect.hclust(m_hclust, k = 6,border="red")
 
 
 
+############ Analisis de Sentimiento ######################################
 
-###############2. K-Means Algoritmos de Analisis Grupa;#############################
+######### Analisis de Sentimientos
+require(devtools)
+install_github("sentiment140", "okugami79")
+######### sentiment analysis
+library(sentiment)
+sentiments <- sentiment(tweets.df$text)
+
+##
+sentiments$score <- 0
+sentiments$score[sentiments$polarity == "positive"] <- 1
+sentiments$score[sentiments$polarity == "negative"] <- -1
+sentiments$date <- as.IDate(tweets.df$created)
+result <- aggregate(score ~ date, data = sentiments, sum)
+# A line graph
+ggplot(data=result, aes(x=date, y=score)) + 
+  geom_line(colour="black", linetype="solid", size=1.5) + 
+  geom_point(colour="red", size=4, shape=21, fill="white")+ 
+  xlab("Fecha") + ylab("Conteo de Sentimientos por dias") + # Set axis labels
+  ggtitle("Grafico de Sentimientos")+
+  stat_smooth()
+
+####### La grafica de Barras########
+c <-qplot(factor(polarity), data=sentiments, geom="bar", fill=factor(polarity))
+c<- c+geom_bar() +
+  xlab("Polaridad") + ylab("Conteo de Sentimientos totales") + # Set axis labels
+  ggtitle("Barras de Sentimientos")
+c
+
+table(sentiments$polarity)
+
+###################################
+write.xlsx(sentiments, "sentiments.xlsx")
+sentimentsneg <- subset(sentiments, polarity=="negative") 
+write.xlsx(sentimentsneg, "sentimentsneg.xlsx")
+sentimentspos <- subset(sentiments, polarity=="positive")
+write.xlsx(sentimentspos, "sentimentspos.xlsx")
+sentimentsneu <- subset(sentiments, polarity=="neutral")
+write.xlsx(sentimentsneu, "sentimentsneu.xlsx")
+###############################################
 
 
-m3 <- t(m2) # Transpone la matriz m2
-set.seed(122) # una semilla random nueva
-k <- 6 # elegimos el numero de cluster k-means
+sentiments <- sentiment(retweets.df$text)
+
+sentiments$score <- 0
+sentiments$score[sentiments$polarity == "positive"] <- 1
+sentiments$score[sentiments$polarity == "negative"] <- -1
+sentiments$date <- as.IDate(retweets.df$created)
+result <- aggregate(score ~ date, data = sentiments, sum)
+
+
+##
+ggplot(data=result, aes(x=date, y=score)) + 
+  geom_line(colour="black", linetype="solid", size=1.5) + 
+  geom_point(colour="red", size=4, shape=21, fill="white")+ 
+  xlab("Fecha") + ylab("Conteo de Sentimientos por dias") + # Set axis labels
+  ggtitle("Grafico de Sentimientos")+
+  stat_smooth()
+
+####### La grafica de Barras########
+c <-qplot(factor(polarity), data=sentiments, geom="bar", fill=factor(polarity))
+c<- c+geom_bar() +
+  xlab("Polaridad") + ylab("Conteo de Sentimientos totales") + # Set axis labels
+  ggtitle("Barras de Sentimientos")
+c
+
+table(sentiments$polarity)
+
+
+##################k-medias######################################
+m3 <- t(m2) # transpose the matrix to cluster documents (tweets)
+set.seed(122) # set a fixed random seed
+k <- 6 # number of clusters
 kmeansResult <- kmeans(m3, k)
-round(kmeansResult$centers, digits = 3) # centros del Grupoide
+round(kmeansResult$centers, digits = 3) #
 
-#################Grafica de K-means######################
-library(fpc)
-library(cluster)
-d <- dist(t(tdm2), method="euclidian")   
-kfit <- kmeans(d, 2)   
-clusplot(as.matrix(tdm2), kfit$cluster, color=T, shade=T, labels=2, lines=0)   
-##########################################################################
-
-
-
-
-##################3.      ##################################################
+###################K-medois######################################
 library(fpc)
 # partitioning around medoids with estimation of number of clusters
 pamResult <- pamk(m3, metric="manhattan")
@@ -197,7 +265,7 @@ for (i in 1:k) {
   cat("cluster", i, ": ",
       colnames(pamResult$medoids)[which(pamResult$medoids[i,]==1)], "\n")
 }
-# plot clustering result
+# grafica el resultado del analisis de Cluster
 layout(matrix(c(1, 2), 1, 2)) # set to two graphs per page
 plot(pamResult, col.p = pamResult$clustering)
 
@@ -207,14 +275,7 @@ for (i in 1:k){
   cat(names(s)[1:5], "\n")
 }
 
-(n.tweet <- length(tweets))
-
-
-
-
-
-
-################################# 4. Analisis de Topicos ################
+################################# 4. Analisis de Topicos (LDA) ################
 
 
 dtm <- as.DocumentTermMatrix(tdm)
@@ -234,22 +295,7 @@ qplot(date, ..count.., data=topics, geom="density",
       fill=term[topic], position="stack")
 #############################################################
 
-######### Analisis de Sentimientos
-require(devtools)
-install_github("sentiment140", "okugami79")
-######### sentiment analysis
-library(sentiment)
-sentiments <- sentiment(tweets.df$text)
-table(sentiments$polarity)
-##
-t
-sentiments$score <- 0
-sentiments$score[sentiments$polarity == "positive"] <- 1
-sentiments$score[sentiments$polarity == "negative"] <- -1
-sentiments$date <- as.IDate(tweets.df$created)
-result <- aggregate(score ~ date, data = sentiments, sum)
-plot(result, type = "l")
-############################
+
 
 
  #### Analisis de Grafos#######
